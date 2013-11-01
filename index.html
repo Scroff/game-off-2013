@@ -1,0 +1,38 @@
+<html>
+<head>
+  <title>Evo</title>
+  <script type="text/javascript" src="lib/ivank.js"></script> // http://lib.ivank.net/
+  <script type="text/javascript" src="lib/Box2dWeb-2.1.a.3.min.js"></script> // https://code.google.com/p/box2dweb/
+  <script type="text/javascript">
+    function Start() {
+      var stage = new Stage("c");
+      var s = new Sprite();
+      stage.addChild(s);
+
+      // Shapes
+      for(var i=0; i<50; i++) {
+        var color = Math.floor(Math.random()*0xffffff);
+        s.graphics.beginFill(color, 0.6);
+        if(i<25) s.graphics.drawRect  (Math.random()*800, Math.random()*500, 70, 70);
+        else     s.graphics.drawCircle(Math.random()*800, Math.random()*500, 40);
+      }
+      
+      // Line
+      s.graphics.lineStyle(3, 0xff0000);
+      s.graphics.moveTo(20, 20);
+      s.graphics.lineTo(400, 400);
+
+      // Curve
+      s.graphics.moveTo(50, 300);
+      s.graphics.curveTo(400,400, 300,50);
+
+      // Triangle
+      s.graphics.beginFill(0x0066ff, 1);
+      s.graphics.drawTriangles([350,100, 600,50, 500,300], [0,1,2]);
+    }
+  </script>
+<head>
+<body onload="Start();">
+  <canvas id="c"></canvas>
+</body>
+</html>

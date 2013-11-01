@@ -1,0 +1,65 @@
+<html>
+<head>
+  <title>Classes Test</title>
+  <script type='text/javascript' src='lib/ivank.js'></script>
+  <script type='text/javascript'>
+    var Foo = (function() {
+          // Constructor 
+          function Foo() {
+            this._bar = 'test'
+          };
+
+          // Add methods to the prototype
+          Foo.prototype.getBar = function() {
+            return this._bar;
+          };
+
+          Foo.prototype.setBar = function(bar) {
+            this._bar = bar;
+          };
+
+          return Foo;
+        })();
+
+    var FooChild = (function() {
+        function FooChild() {
+          this._notbar = 'moo';
+        };
+        
+        // Inheritance
+        FooChild.prototype = new Foo();
+
+        FooChild.prototype.getNotBar = function() {
+          return this._notbar;
+        }
+
+        return FooChild;
+      })();
+
+    function Start() {
+      var a = new Foo();
+      var b = new Foo();
+      var c = new Foo();
+
+      b.setBar('b');
+      c.setBar('c');
+
+      alert(a.getBar());
+      alert(b.getBar());
+      alert(c.getBar());
+
+      a._bar = null;
+      alert(a.getBar());
+      alert(b.getBar());
+
+      var d = new FooChild();
+      alert(d instanceof Foo);
+      alert(d instanceof FooChild);
+      alert(d.getNotBar());
+      alert(a.getNotBar()); // Error here because this is of Foo
+    }
+  </script>
+<head>
+<body onload='Start();'>
+</body>
+</html>
