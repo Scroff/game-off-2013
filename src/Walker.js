@@ -1,10 +1,18 @@
 var Walker = (function () { 
   // Constructor
-  // bitmapLocation = Location of the bitmap to be used for drawing the walker
   function Walker() {
+    this._modules = [];
   };
 
   Walker.prototype = new ActorBody();
+
+  Walker.prototype.addModule = function (module, i) {
+    this._modules[i] = module;
+  };
+
+  Walker.prototype.activateModule = function (i) {
+    this._modules[i].activate();
+  }
 
   return Walker;
  

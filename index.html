@@ -30,19 +30,20 @@
       var bxFixDef = new b2FixtureDef();
       bxFixDef.density = 1;
       bxFixDef.shape = new b2PolygonShape();
-      bxFixDef.shape.SetAsBox(10, 1);
-      bodyDef.position.Set(9, stage.stageHeight/100 + 1);
+      bxFixDef.shape.SetAsBox(stage.stageWidth * 0.5 * ActorBody.PIXEL_TO_METER, 0.1);
+      bodyDef.position.Set(0, stage.stageHeight * ActorBody.PIXEL_TO_METER + 0.1);
 
       world.CreateBody(bodyDef).CreateFixture(bxFixDef);
 
       // Setup walker
       bodyDef.type = b2Body.b2_dynamicBody;
       bxFixDef.shape.SetAsBox(6.4, 6.4);
-      bodyDef.position.Set(5, -5);
+      bodyDef.position.Set(0, 0);
       var body = world.CreateBody(bodyDef);
       body.CreateFixture(bxFixDef);
       walker = new Walker();
       walker.init('img/sloth.png', 64, 64, body);
+      walker.setDebug(true);
       stage.addChild(walker.getSprite());
     }
 
@@ -50,6 +51,7 @@
       world.Step(1 / 60, 3, 3);
       world.ClearForces();
 
+      walker.SetAngularVelocity(Math.PI);
       walker.update();
     }
   </script>

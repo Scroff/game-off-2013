@@ -1,0 +1,39 @@
+<html>
+<head></head>
+<body>
+<script type='text/javascript'>
+
+var C1 = (function () {
+      function C1() {
+        this.foo = 'foo';
+      }
+
+      C1.prototype.getFoo = function () {
+        return this.foo;
+      }
+
+      C1.prototype.setFoo = function(_foo) {
+        this.foo = _foo;
+      }
+
+      return C1;
+    })()
+
+var C2 = (function () {
+      function C2(bar) {
+        .prototype = bar;
+      }
+
+      return C2;
+    })()
+
+var c1 = new C1();
+var c2 = new C2(c1);
+
+alert(c2.getFoo());
+c2.setFoo('bar');
+alert(c2.getFoo());
+alert(c1.getFoo());
+</script>
+</body>
+</html>
