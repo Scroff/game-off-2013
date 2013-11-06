@@ -10,8 +10,8 @@ var Walker = (function () {
     this._modules[i] = module;
   };
 
-  Walker.prototype.activateModule = function (i) {
-    this._modules[i].activate();
+  Walker.prototype.setModuleActive = function (i, active) {
+    this._modules[i].setActive(active);
   }
 
   Walker.prototype.update = function () {

@@ -6,10 +6,14 @@
   <script type='text/javascript' src='src/ActorBody.js'></script>
   <script type='text/javascript' src='src/Walker.js'></script>
   <script type='text/javascript' src='src/Module.js'></script>
+  <script type='text/javascript' src='src/RotationalModule.js'></script>
+  <script type='text/javascript' src='src/ModuleButton.js'></script>
   <script type='text/javascript'>
     // Globals
     var world, // The box2d world
         walker, // The player
+        moduleButtons   = [],
+        MAX_MODULES     = 6,
         b2Vec2          = Box2D.Common.Math.b2Vec2, // The various box2d classes
         b2BodyDef       = Box2D.Dynamics.b2BodyDef, // that we will need.
         b2Body          = Box2D.Dynamics.b2Body,
@@ -23,7 +27,9 @@
       stage.addEventListener(Event.ENTER_FRAME, onEF);
       world = new b2World(new b2Vec2(0, 10), true); // Gravity, doSleep 
       setupGround(stage);
+      setupUI(stage);
       setupWalker(stage);
+      setupModules(stage);
     }
 
     function setupGround(stage) {
@@ -34,40 +40,58 @@
       stage.addChild(ground.getSprite());
     }
 
+    function setupModules(stage) {
+      var slothArmBMD = new BitmapData('img/slothArm.png'),
+          armModule = new RotationalModule();
+
+      armModule.init(slothArmBMD, 128, 32, 50, 0, b2Body.b2_dynamicBody, world);
+      addModuleToButton(armModule, 0);
+      armModule.setDebug(true);
+      armModule.attachToActorBody(walker, walker.getBody().GetWorldCenter(), world);
+      stage.addChild(armModule.getSprite());
+   }
+
+    function addModuleToButton(module, index) {
+      walker.addModule(module, index); // TODO: I don't think we need modules here
+      moduleButtons[index].setModule(module);
+    }
+
     function setupWalker(stage) {
-      var slothBMD = new BitmapData('img/transparent.png');
+      var slothBMD = new BitmapData('img/sloth.png');
 
       walker = new Walker();
       walker.init(slothBMD, 64, 64, 32, 32, b2Body.b2_dynamicBody, world);
       walker.setDebug(true);
       stage.addChild(walker.getSprite());
-
-      // Attach a temporary module
-      var module = new Module();
-      module.init(slothBMD, 64, 64, 50, 50, b2Body.b2_dynamicBody, world);
-      module.attachToActorBody(walker, walker.getBody().GetWorldCenter(), world);
-      stage.addChild(module.getSprite());
-      module.setDebug(true);
-      walker.addModule(module, 0);
     }
 
     function setupUI(stage) {
-      
+      var buttonBMD = new BitmapData('img/buttonBack.png'),
+          buttonBM = new Bitmap(buttonBMD),
+          moduleButtonX = (stage.stageWidth / MAX_MODULES + 1),
+          moduleButtonXGap = stage.stageWidth / (MAX_MODULES + 1),
+          moduleButtonY = stage.stageHeight - 64;
+
+      buttonBM.x = buttonBM.y = -32;
+
+      for(var i = 0; i < MAX_MODULES; i++) {
+        moduleButtons[i] = new ModuleButton();
+        moduleButtons[i].init(moduleButtonX, moduleButtonY, buttonBM);
+        stage.addChild(moduleButtons[i].getSprite());
+        moduleButtonX += moduleButtonXGap;
+      }
+    }
+
+    function moduleButtonPress(e) {
+      console.log(e);
+      //walker.setModuleActive(e.index, true);
     }
 
     function onEF() {
       world.Step(1 / 60, 3, 3);
       world.ClearForces();
 
-      walker.SetAngularVelocity(Math.PI);
       walker.update();
-    }
-
-    // Debug method for outputing to the js console
-    function log(msg) {
-      setTimeout(function() {
-          throw new Error(msg);
-      }, 0);
     }
   </script>
 <head>

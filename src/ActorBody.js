@@ -15,6 +15,7 @@ var ActorBody = (function () {
     bm.y = pxWidth * -0.5;
     this._sprite = new Sprite();
     this._sprite.addChild(bm);
+
     this._width = pxWidth;
     this._height = pxHeight;
 
