@@ -8,16 +8,35 @@ var ActorBody = (function () {
     this._debug = false;
   }; 
 
-  ActorBody.prototype.init = function (bitmapData, height, width, body) {
+  ActorBody.prototype.init = function (bitmapData, pxHeight, pxWidth, pxX, pxY, bodyType,  world) {
+    // Setup IvanK sprite
     var bm = new Bitmap(bitmapData);
-    bm.x = height * -0.5;
-    bm.y = width * -0.5;
+    bm.x = pxHeight * -0.5;
+    bm.y = pxWidth * -0.5;
     this._sprite = new Sprite();
     this._sprite.addChild(bm);
-    this._width = width;
-    this._height = height;
+    this._width = pxWidth;
+    this._height = pxHeight;
 
+    // Create box2d compnents
+    var bodyDef = new b2BodyDef(),
+        bxFixDef = new b2FixtureDef(),
+        mHeight = pxHeight * ActorBody.PIXEL_TO_METER,
+        mWidth = pxWidth * ActorBody.PIXEL_TO_METER,
+        mX = pxX * ActorBody.PIXEL_TO_METER,
+        mY = pxY * ActorBody.PIXEL_TO_METER;
+
+    bxFixDef.density = 1;
+    bxFixDef.shape = new b2PolygonShape();
+    bxFixDef.shape.SetAsBox(mWidth * 0.5, mHeight * 0.5);
+
+    bodyDef.type = bodyType;
+    bodyDef.position.Set(mX, mY);
+    var body = world.CreateBody(bodyDef);
+    body.CreateFixture(bxFixDef);
     this._body = body;
+
+    // Update sprite to match body
     this.update();
   };
 
