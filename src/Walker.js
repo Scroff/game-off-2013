@@ -14,6 +14,13 @@ var Walker = (function () {
     this._modules[i].activate();
   }
 
+  Walker.prototype.update = function () {
+    this._update();
+    for(m in this._modules) {
+      this._modules[m].update();
+    }
+  }
+
   return Walker;
  
 })();

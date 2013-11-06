@@ -8,9 +8,8 @@ var ActorBody = (function () {
     this._debug = false;
   }; 
 
-  ActorBody.prototype.init = function (bitmapLocation, height, width, body) {
-    var bmData = new BitmapData(bitmapLocation),
-        bm = new Bitmap(bmData);
+  ActorBody.prototype.init = function (bitmapData, height, width, body) {
+    var bm = new Bitmap(bitmapData);
     bm.x = height * -0.5;
     bm.y = width * -0.5;
     this._sprite = new Sprite();
@@ -23,6 +22,13 @@ var ActorBody = (function () {
   };
 
   ActorBody.prototype.update = function () {
+    this._update();
+  }
+
+  // I split up the update into public and "private" to make it easier
+  // for the Walker class to call update.
+  // Perhaps if I was to redo, I could use some class library.
+  ActorBody.prototype._update = function () {
     var p = this._body.GetPosition();
     this._sprite.x = p.x * ActorBody.METER_TO_PIXEL;
     this._sprite.y = p.y * ActorBody.METER_TO_PIXEL;
@@ -41,11 +47,15 @@ var ActorBody = (function () {
     this._body.SetAngularVelocity(omega);
   }
 
+  ActorBody.prototype.getBody = function () {
+    return this._body;
+  };
+
   ActorBody.prototype.setDebug = function (debug) {
     this._debug = debug;
     if(debug) {
-      var x = this._sprite.x - this._width * 0.5,
-          y = this._sprite.y - this._height * 0.5;
+      var x = 0 - this._width * 0.5,
+          y = 0 - this._height * 0.5;
       this._sprite.graphics.lineStyle(3, 0xff0000);
       this._sprite.graphics.drawRect(x, y, this._width, this._height);
     } else {

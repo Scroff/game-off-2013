@@ -5,46 +5,80 @@
   <script type='text/javascript' src='lib/Box2dWeb-2.1.a.3.min.js'></script> 
   <script type='text/javascript' src='src/ActorBody.js'></script>
   <script type='text/javascript' src='src/Walker.js'></script>
+  <script type='text/javascript' src='src/Module.js'></script>
   <script type='text/javascript'>
-    var world;
-    var walker;
+    // Globals
+    var world, // The box2d world
+        walker, // The player
+        b2Vec2          = Box2D.Common.Math.b2Vec2, // The various box2d classes
+        b2BodyDef       = Box2D.Dynamics.b2BodyDef, // that we will need.
+        b2Body          = Box2D.Dynamics.b2Body,
+        b2FixtureDef    = Box2D.Dynamics.b2FixtureDef,
+        b2World         = Box2D.Dynamics.b2World,
+        b2PolygonShape  = Box2D.Collision.Shapes.b2PolygonShape,
+        b2CircleShape   = Box2D.Collision.Shapes.b2CircleShape;
 
     function Start() {
       var stage = new Stage('c');
       stage.addEventListener(Event.ENTER_FRAME, onEF);
-
-      // Setup box2d world.
-      var b2Vec2          = Box2D.Common.Math.b2Vec2,
-          b2BodyDef       = Box2D.Dynamics.b2BodyDef,
-          b2Body          = Box2D.Dynamics.b2Body,
-          b2FixtureDef    = Box2D.Dynamics.b2FixtureDef,
-          b2World         = Box2D.Dynamics.b2World,
-          b2PolygonShape  = Box2D.Collision.Shapes.b2PolygonShape,
-          b2CircleShape   = Box2D.Collision.Shapes.b2CircleShape;
-
       world = new b2World(new b2Vec2(0, 10), true); // Gravity, doSleep 
-      var bodyDef = new b2BodyDef();
+      setupGround(stage);
+      setupWalker(stage);
+    }
 
-      // Create the ground
-      bodyDef.type = b2Body.b2_staticBody;
-      var bxFixDef = new b2FixtureDef();
+    function setupGround(stage) {
+      var bodyDef = new b2BodyDef(),
+          bxFixDef = new b2FixtureDef(),
+          groundBMD = new BitmapData('img/transparent.png');
+
       bxFixDef.density = 1;
       bxFixDef.shape = new b2PolygonShape();
-      bxFixDef.shape.SetAsBox(stage.stageWidth * 0.5 * ActorBody.PIXEL_TO_METER, 0.1);
-      bodyDef.position.Set(0, stage.stageHeight * ActorBody.PIXEL_TO_METER + 0.1);
+      bxFixDef.shape.SetAsBox(10, 100);
 
-      world.CreateBody(bodyDef).CreateFixture(bxFixDef);
-
-      // Setup walker
-      bodyDef.type = b2Body.b2_dynamicBody;
-      bxFixDef.shape.SetAsBox(6.4, 6.4);
-      bodyDef.position.Set(0, 0);
+      bodyDef.type = b2Body.b2_staticBody;
+      bodyDef.position.Set(40,40);
       var body = world.CreateBody(bodyDef);
       body.CreateFixture(bxFixDef);
+
+      var ground = new ActorBody();
+      ground.init(groundBMD, 100, 1000, body);
+      ground.setDebug(true);
+      stage.addChild(ground.getSprite());
+    }
+
+    function setupWalker(stage) {
+      var bodyDef = new b2BodyDef(),
+          bxFixDef = new b2FixtureDef(),
+          slothBMD = new BitmapData('img/transparent.png');
+
+      bxFixDef.density = 1;
+      bxFixDef.shape = new b2PolygonShape();
+      bxFixDef.shape.SetAsBox(6.4, 6.4);
+
+      bodyDef.type = b2Body.b2_dynamicBody;
+      bodyDef.position.Set(3.2, 3.2);
+      var body = world.CreateBody(bodyDef);
+      body.CreateFixture(bxFixDef);
+
       walker = new Walker();
-      walker.init('img/sloth.png', 64, 64, body);
+      walker.init(slothBMD, 64, 64, body);
       walker.setDebug(true);
       stage.addChild(walker.getSprite());
+
+      // Attach a temporary module
+      var module = new Module();
+      bodyDef.position.Set(5, 5);
+      var moduleBody = world.CreateBody(bodyDef);
+      moduleBody.CreateFixture(bxFixDef);
+      module.init(slothBMD, 64, 64, moduleBody);
+      module.attachToActorBody(walker, walker.getBody().GetWorldCenter(), world);
+      stage.addChild(module.getSprite());
+      module.setDebug(true);
+      walker.addModule(module, 0);
+    }
+
+    function setupUI(stage) {
+      
     }
 
     function onEF() {
@@ -53,6 +87,13 @@
 
       walker.SetAngularVelocity(Math.PI);
       walker.update();
+    }
+
+    // Debug method for outputing to the js console
+    function log(msg) {
+      setTimeout(function() {
+          throw new Error(msg);
+      }, 0);
     }
   </script>
 <head>
