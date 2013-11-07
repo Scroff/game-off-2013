@@ -14,9 +14,18 @@
         walker, // The player
         moduleButtons   = [],
         MAX_MODULES     = 6,
-        GAME_STATES     = { 'build' : 0,
-                            'run' : 1 },
-        gameState       = GAME_STATES.build,
+        inBuildMode     = true,
+        keyStates       = [],
+        keyToButton = {'0' : 9, // Maps a key to a module button
+                       '1' : 0,
+                       '2' : 1,
+                       '3' : 2,
+                       '4' : 3,
+                       '5' : 4,
+                       '6' : 5,
+                       '7' : 6,
+                       '8' : 7,
+                       '9' : 8},
         b2Vec2          = Box2D.Common.Math.b2Vec2, // The various box2d classes
         b2BodyDef       = Box2D.Dynamics.b2BodyDef, // that we will need.
         b2Body          = Box2D.Dynamics.b2Body,
@@ -27,6 +36,8 @@
 
     function Start() {
       var stage = new Stage('c');
+      for(var i = 48; i <= 57; i++) // 48 to 57 are keys 0 to 9 
+        keyStates[i] = false; // Assume no keys are pressed to begin
       stage.addEventListener(Event.ENTER_FRAME, onEF);
       stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown);
       stage.addEventListener(KeyboardEvent.KEY_UP, keyUp);
@@ -79,12 +90,6 @@
       for(var i = 0; i < MAX_MODULES; i++) {
         var buttonBM = new Bitmap(buttonBMD);
         buttonBM.x = buttonBM.y = -32;
-/*        moduleButtons[moduleButtonX] = new ModuleButton();
-        moduleButtons[moduleButtonX].init(moduleButtonX, moduleButtonY, buttonBM);
-        stage.addChild(moduleButtons[moduleButtonX].getSprite());
-        moduleButtons[moduleButtonX].getSprite().addEventListener(MouseEvent.MOUSE_DOWN, moduleButtonPress);
-        console.log(moduleButtonX);
-        console.log(moduleButtons[moduleButtonX]);*/
         moduleButtons[i] = new Sprite();
         moduleButtons[i].addChild(buttonBM);
         moduleButtons[i].x = moduleButtonX;
@@ -108,22 +113,30 @@
     }
 
     function onEF() {
-      switch (gameState) {
-        case GAME_STATES.build:
-          break;
-        case GAME_STATES.run:
-          world.Step(1 / 60, 3, 3);
-          world.ClearForces();
-          walker.update();
-          break;
+      if(inBuildMode) {
+
+      } else {
+        // Activate modules as per key presses
+        for(var key in keyToButton) {
+          var button = keyToButton[key];
+          if(typeof moduleButtons[button] !== 'undefined' &&
+              typeof moduleButtons[button].module !== 'undefined')
+            moduleButtons[button].module.setActive(keyStates[key]);
+        }
+        world.Step(1 / 60, 3, 3);
+        world.ClearForces();
+        walker.update();
       }
     }
 
-      function keyDown(e) {
-        console.log(e.keyCode);
-      }
+    function keyDown(e) {
+      keyStates[String.fromCharCode(e.keyCode)] = true;
+    }
 
-      function keyUp(e) {
+    function keyUp(e) {
+      keyStates[String.fromCharCode(e.keyCode)] = false;
+      if(e.keyCode == ' '.charCodeAt(0)) { // Space key to switch between modes
+        inBuildMode = !inBuildMode;
       }
     }
   </script>
