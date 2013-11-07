@@ -14,6 +14,9 @@
         walker, // The player
         moduleButtons   = [],
         MAX_MODULES     = 6,
+        GAME_STATES     = { 'build' : 0,
+                            'run' : 1 },
+        gameState       = GAME_STATES.build,
         b2Vec2          = Box2D.Common.Math.b2Vec2, // The various box2d classes
         b2BodyDef       = Box2D.Dynamics.b2BodyDef, // that we will need.
         b2Body          = Box2D.Dynamics.b2Body,
@@ -25,6 +28,8 @@
     function Start() {
       var stage = new Stage('c');
       stage.addEventListener(Event.ENTER_FRAME, onEF);
+      stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown);
+      stage.addEventListener(KeyboardEvent.KEY_UP, keyUp);
       world = new b2World(new b2Vec2(0, 10), true); // Gravity, doSleep 
       setupGround(stage);
       setupUI(stage);
@@ -49,23 +54,24 @@
       armModule.setDebug(true);
       //armModule.attachToActorBody(walker, walker.getBody().GetWorldCenter(), world);
       stage.addChild(armModule.getSprite());
-   }
+    }
 
     function addModuleToButton(module, index) {
       moduleButtons[index].module = module;
+      walker.addModule(module, index);
     }
 
     function setupWalker(stage) {
       var slothBMD = new BitmapData('img/sloth.png');
 
       walker = new Walker();
-      walker.init(slothBMD, 64, 64, 32, 32, b2Body.b2_dynamicBody, world);
+      walker.init(slothBMD, 64, 64, 100, 100, b2Body.b2_dynamicBody, world);
       walker.setDebug(true);
       stage.addChild(walker.getSprite());
     }
 
     function setupUI(stage) {
-      var buttonBMD = new BitmapData('img/buttonBack.png'),
+      var buttonBMD = new BitmapData('img/moduleButtonBack.png'),
           moduleButtonX = (stage.stageWidth / MAX_MODULES + 1),
           moduleButtonXGap = stage.stageWidth / (MAX_MODULES + 1),
           moduleButtonY = stage.stageHeight - 64;
@@ -85,6 +91,7 @@
         moduleButtons[i].y = moduleButtonY;
         moduleButtons[i].index = i;
         moduleButtons[i].addEventListener(MouseEvent.MOUSE_DOWN, moduleButtonDown);
+        moduleButtons[i].addEventListener(MouseEvent.MOUSE_UP, moduleButtonUp);
         stage.addChild(moduleButtons[i]);
         moduleButtonX += moduleButtonXGap;
       }
@@ -95,11 +102,29 @@
         e.currentTarget.module.setActive(true);
     }
 
-    function onEF() {
-      world.Step(1 / 60, 3, 3);
-      world.ClearForces();
+    function moduleButtonUp(e) {
+      if(typeof e.currentTarget.module !== 'undefined')
+        e.currentTarget.module.setActive(false);
+    }
 
-      walker.update();
+    function onEF() {
+      switch (gameState) {
+        case GAME_STATES.build:
+          break;
+        case GAME_STATES.run:
+          world.Step(1 / 60, 3, 3);
+          world.ClearForces();
+          walker.update();
+          break;
+      }
+    }
+
+      function keyDown(e) {
+        console.log(e.keyCode);
+      }
+
+      function keyUp(e) {
+      }
     }
   </script>
 <head>

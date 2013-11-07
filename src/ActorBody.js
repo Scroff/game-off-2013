@@ -11,8 +11,8 @@ var ActorBody = (function () {
   ActorBody.prototype.init = function (bitmapData, pxHeight, pxWidth, pxX, pxY, bodyType,  world) {
     // Setup IvanK sprite
     var bm = new Bitmap(bitmapData);
-    bm.x = pxHeight * -0.5;
-    bm.y = pxWidth * -0.5;
+    bm.y = pxHeight * -0.5;
+    bm.x = pxWidth * -0.5;
     this._sprite = new Sprite();
     this._sprite.addChild(bm);
 
