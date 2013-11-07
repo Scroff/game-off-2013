@@ -47,13 +47,12 @@
       armModule.init(slothArmBMD, 128, 32, 50, 0, b2Body.b2_dynamicBody, world);
       addModuleToButton(armModule, 0);
       armModule.setDebug(true);
-      armModule.attachToActorBody(walker, walker.getBody().GetWorldCenter(), world);
+      //armModule.attachToActorBody(walker, walker.getBody().GetWorldCenter(), world);
       stage.addChild(armModule.getSprite());
    }
 
     function addModuleToButton(module, index) {
-      walker.addModule(module, index); // TODO: I don't think we need modules here
-      moduleButtons[index].setModule(module);
+      moduleButtons[index].module = module;
     }
 
     function setupWalker(stage) {
@@ -67,24 +66,33 @@
 
     function setupUI(stage) {
       var buttonBMD = new BitmapData('img/buttonBack.png'),
-          buttonBM = new Bitmap(buttonBMD),
           moduleButtonX = (stage.stageWidth / MAX_MODULES + 1),
           moduleButtonXGap = stage.stageWidth / (MAX_MODULES + 1),
           moduleButtonY = stage.stageHeight - 64;
 
-      buttonBM.x = buttonBM.y = -32;
-
       for(var i = 0; i < MAX_MODULES; i++) {
-        moduleButtons[i] = new ModuleButton();
-        moduleButtons[i].init(moduleButtonX, moduleButtonY, buttonBM);
-        stage.addChild(moduleButtons[i].getSprite());
+        var buttonBM = new Bitmap(buttonBMD);
+        buttonBM.x = buttonBM.y = -32;
+/*        moduleButtons[moduleButtonX] = new ModuleButton();
+        moduleButtons[moduleButtonX].init(moduleButtonX, moduleButtonY, buttonBM);
+        stage.addChild(moduleButtons[moduleButtonX].getSprite());
+        moduleButtons[moduleButtonX].getSprite().addEventListener(MouseEvent.MOUSE_DOWN, moduleButtonPress);
+        console.log(moduleButtonX);
+        console.log(moduleButtons[moduleButtonX]);*/
+        moduleButtons[i] = new Sprite();
+        moduleButtons[i].addChild(buttonBM);
+        moduleButtons[i].x = moduleButtonX;
+        moduleButtons[i].y = moduleButtonY;
+        moduleButtons[i].index = i;
+        moduleButtons[i].addEventListener(MouseEvent.MOUSE_DOWN, moduleButtonDown);
+        stage.addChild(moduleButtons[i]);
         moduleButtonX += moduleButtonXGap;
       }
     }
 
-    function moduleButtonPress(e) {
-      console.log(e);
-      //walker.setModuleActive(e.index, true);
+    function moduleButtonDown(e) {
+      if(typeof e.currentTarget.module !== 'undefined')
+        e.currentTarget.module.setActive(true);
     }
 
     function onEF() {

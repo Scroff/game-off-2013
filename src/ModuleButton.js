@@ -15,7 +15,6 @@ var ModuleButton = (function () {
   };
 
   ModuleButton.prototype.setModule = function (module) {
-    console.log(this);
     this._module = module;
   };
 
@@ -25,7 +24,6 @@ var ModuleButton = (function () {
 
   ModuleButton.prototype.buttonDown = function (e) {
     console.log(this);
-    console.log(e);
     if(this._module)
       this._module.setActive(true);
   };
