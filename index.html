@@ -8,14 +8,19 @@
   <script type='text/javascript' src='src/Module.js'></script>
   <script type='text/javascript' src='src/RotationalModule.js'></script>
   <script type='text/javascript' src='src/ModuleButton.js'></script>
+  <script type='text/javascript' src='src/Menu.js'></script>
+  <script type='text/javascript' src='src/ModuleDef.js'></script>
   <script type='text/javascript'>
     // Globals
     var world, // The box2d world
         walker, // The player
+        menu,
         moduleButtons   = [],
         MAX_MODULES     = 6,
         inBuildMode     = true,
         keyStates       = [],
+        mouseX          = 0,
+        mouseY          = 0,
         keyToButton = {'0' : 9, // Maps a key to a module button
                        '1' : 0,
                        '2' : 1,
@@ -35,7 +40,9 @@
         b2CircleShape   = Box2D.Collision.Shapes.b2CircleShape;
 
     function Start() {
-      var stage = new Stage('c');
+      var stage = new Stage('c'),
+          canvas = document.getElementById('c');
+          canvas.addEventListener('mousemove', mouseMove);
       for(var i = 48; i <= 57; i++) // 48 to 57 are keys 0 to 9 
         keyStates[i] = false; // Assume no keys are pressed to begin
       stage.addEventListener(Event.ENTER_FRAME, onEF);
@@ -45,7 +52,18 @@
       setupGround(stage);
       setupUI(stage);
       setupWalker(stage);
+      setupMenu(stage);
       setupModules(stage);
+    }
+
+    function setupMenu(stage) {
+      menu = new Menu(stage.stageWidth, stage.stageHeight);
+      stage.addChild(menu.getSprite());
+      menu.getSprite().addEventListener(MouseEvent.MOUSE_UP, menuMouseUp);
+    }
+  
+    function menuMouseUp(e) {
+      menu.setActive(false);
     }
 
     function setupGround(stage) {
@@ -58,13 +76,13 @@
 
     function setupModules(stage) {
       var slothArmBMD = new BitmapData('img/slothArm.png'),
-          armModule = new RotationalModule();
+          armDef = new ModuleDef(RotationalModule, slothArmBMD, 32, 128, world);
 
-      armModule.init(slothArmBMD, 128, 32, 50, 0, b2Body.b2_dynamicBody, world);
-      addModuleToButton(armModule, 0);
-      armModule.setDebug(true);
+      menu.addModuleDef(armDef, 100, 100);
+      //addModuleToButton(armModule, 0);
+      //armModule.setDebug(true);
       //armModule.attachToActorBody(walker, walker.getBody().GetWorldCenter(), world);
-      stage.addChild(armModule.getSprite());
+      //stage.addChild(armModule.getSprite());
     }
 
     function addModuleToButton(module, index) {
@@ -100,9 +118,28 @@
         stage.addChild(moduleButtons[i]);
         moduleButtonX += moduleButtonXGap;
       }
+
+      // Add menu button
+      var menuButtonBMD = new BitmapData('img/menuButton.png'),
+          menuButtonBM = new Bitmap(menuButtonBMD),
+          menuButtonX = stage.stageWidth - 64,
+          menuButtonY = stage.stageHeight - 64;
+
+      menuButtonBM.x = menuButtonBM.y = -32;
+      var menuButton = new Sprite();
+      menuButton.addChild(menuButtonBM);
+      menuButton.x = menuButtonX;
+      menuButton.y = menuButtonY;
+      menuButton.addEventListener(MouseEvent.MOUSE_UP, menuButtonUp);
+      stage.addChild(menuButton);
+    }
+
+    function menuButtonUp(e) {
+      menu.setActive(true);
     }
 
     function moduleButtonDown(e) {
+      console.log(e);
       if(typeof e.currentTarget.module !== 'undefined')
         e.currentTarget.module.setActive(true);
     }
@@ -138,6 +175,13 @@
       if(e.keyCode == ' '.charCodeAt(0)) { // Space key to switch between modes
         inBuildMode = !inBuildMode;
       }
+    }
+    
+    // Updates the position of the mouse because the ivank events don't seem 
+    // to have them
+    function mouseMove(e) {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
     }
   </script>
 <head>
