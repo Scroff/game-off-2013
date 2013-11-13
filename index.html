@@ -22,6 +22,7 @@
         keyStates       = [],
         mouseX          = 0,
         mouseY          = 0,
+        mouseSprite     = null,
         keyToButton = {'0' : 9, // Maps a key to a module button
                        '1' : 0,
                        '2' : 1,
@@ -75,6 +76,12 @@
       stage.addChild(ground.getSprite());
     }
 
+    // To be added to event listeners for module sprites 
+    // should be called when mouse is pressed while sprite is on mouse
+    function moduleMouseDown(e) {
+      mouseSprite.visible = false;
+    };
+
     function setupModules(stage) {
       var slothArmBMD = new BitmapData('img/slothArm.png'),
           armDef = new ModuleDef(RotationalModule, slothArmBMD, 32, 128, world),
@@ -84,6 +91,7 @@
       armDefSprite.x = 100;
       armDefSprite.y = 100;
       armDefSprite.visible = false;
+      armDefSprite.addEventListener(MouseEvent.MOUSE_UP, moduleMouseDown);
       stage.addChild(armDefSprite);
       moduleDefs.push(armDef);
       menu.addModuleOption(slothArmBMD, 150, 100, 32, 128, selectModuleInMenu, armDefSprite.index);
@@ -109,7 +117,11 @@
     }
 
     function selectModuleInMenu(e) {
-      console.log(e.currentTarget.index);
+      var eventSprite = e.currentTarget;
+      mouseSprite = moduleDefs[e.currentTarget.index].getSprite();
+      console.log(eventSprite.x - mouseX);
+      console.log(eventSprite.y - mouseY);
+      mouseSprite.visible = true;
     }
 
     function setupUI(stage) {
@@ -164,7 +176,10 @@
 
     function onEF() {
       if(inBuildMode) {
-
+        if(mouseSprite != null) {
+          mouseSprite.x = mouseX;
+          mouseSprite.y = mouseY;
+        }
       } else {
         // Activate modules as per key presses
         for(var key in keyToButton) {

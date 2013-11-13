@@ -23,10 +23,6 @@ var Menu = (function () {
     this._moduleSprites = []; // Module sprites
    };
 
-  Menu.prototype.addSprite = function (sprite) {
-    this._sprite.addChild(sprite);
-  };
-
   Menu.prototype.addModuleOption = function (bitmapData, x, y, width, height, action, moduleDefIndex) {
     var bitmap = new Bitmap(bitmapData),
         sprite = new Sprite();
@@ -40,26 +36,6 @@ var Menu = (function () {
     sprite.addEventListener(MouseEvent.MOUSE_UP, action);
 
     this._sprite.addChild(sprite);
-  };
-
-  // Deprecated
-  Menu.prototype.addModuleDef = function (moduleDef, x, y, stage) {
-    var sprite = new Sprite(),
-        bitmap = new Bitmap(moduleDef.getBitmapData()),
-        menuBitmap = new Bitmap(moduleDef.getBitmapData());
-
-    //bitmap.x = moduleDef.getWidth * -0.5;
-    //bitmap.y = moduleDef.getHeight * -0.5;
-    sprite.addChild(bitmap);
-
-    sprite.index = this._moduleDefs.length;
-    sprite.x = x;
-    sprite.y = y;
-
-    this._sprite.addChild(bitmap);
-
-    this._moduleDefs.push(moduleDef);
-    this._moduleSprites.push(sprite);
   };
 
   Menu.prototype.getSprite = function () {
