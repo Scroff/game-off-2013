@@ -18,6 +18,7 @@
         moduleButtons   = [],
         MAX_MODULES     = 6,
         inBuildMode     = true,
+        moduleDefs      = [],
         keyStates       = [],
         mouseX          = 0,
         mouseY          = 0,
@@ -76,9 +77,17 @@
 
     function setupModules(stage) {
       var slothArmBMD = new BitmapData('img/slothArm.png'),
-          armDef = new ModuleDef(RotationalModule, slothArmBMD, 32, 128, world);
+          armDef = new ModuleDef(RotationalModule, slothArmBMD, 32, 128, world),
+          armDefSprite = armDef.getSprite();
 
-      menu.addModuleDef(armDef, 100, 100);
+      armDefSprite.index = moduleDefs.length;
+      armDefSprite.x = 100;
+      armDefSprite.y = 100;
+      armDefSprite.visible = false;
+      stage.addChild(armDefSprite);
+      moduleDefs.push(armDef);
+      menu.addModuleOption(slothArmBMD, 150, 100, 32, 128, selectModuleInMenu, armDefSprite.index);
+      //menu.addModuleDef(armDef, 100, 100, stage);
       //addModuleToButton(armModule, 0);
       //armModule.setDebug(true);
       //armModule.attachToActorBody(walker, walker.getBody().GetWorldCenter(), world);
@@ -97,6 +106,10 @@
       walker.init(slothBMD, 64, 64, 100, 100, b2Body.b2_dynamicBody, world);
       walker.setDebug(true);
       stage.addChild(walker.getSprite());
+    }
+
+    function selectModuleInMenu(e) {
+      console.log(e.currentTarget.index);
     }
 
     function setupUI(stage) {

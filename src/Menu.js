@@ -23,17 +23,39 @@ var Menu = (function () {
     this._moduleSprites = []; // Module sprites
    };
 
-  Menu.prototype.addModuleDef = function (moduleDef, x, y) {
-    var sprite = new Sprite(),
-        bitmap = new Bitmap(moduleDef.getBitmapData());
+  Menu.prototype.addSprite = function (sprite) {
+    this._sprite.addChild(sprite);
+  };
 
-    bitmap.x = moduleDef.getWidth * -0.5;
-    bitmap.y = moduleDef.getHeight * -0.5;
+  Menu.prototype.addModuleOption = function (bitmapData, x, y, width, height, action, moduleDefIndex) {
+    var bitmap = new Bitmap(bitmapData),
+        sprite = new Sprite();
+
+    bitmap.x = width * -0.5;
+    bitmap.y = height * -0.5;
+    sprite.addChild(bitmap);
+    sprite.x = x;
+    sprite.y = y;
+    sprite.index = moduleDefIndex;
+    sprite.addEventListener(MouseEvent.MOUSE_UP, action);
+
+    this._sprite.addChild(sprite);
+  };
+
+  // Deprecated
+  Menu.prototype.addModuleDef = function (moduleDef, x, y, stage) {
+    var sprite = new Sprite(),
+        bitmap = new Bitmap(moduleDef.getBitmapData()),
+        menuBitmap = new Bitmap(moduleDef.getBitmapData());
+
+    //bitmap.x = moduleDef.getWidth * -0.5;
+    //bitmap.y = moduleDef.getHeight * -0.5;
     sprite.addChild(bitmap);
 
     sprite.index = this._moduleDefs.length;
     sprite.x = x;
     sprite.y = y;
+
     this._sprite.addChild(bitmap);
 
     this._moduleDefs.push(moduleDef);

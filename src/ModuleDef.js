@@ -3,6 +3,11 @@ var ModuleDef = (function () {
   function ModuleDef(type, bitmapData, width, height, world) {
     this._type = type;
     this._bitmapData = bitmapData;
+    var bitmap = new Bitmap(bitmapData);
+    bitmap.x = width * -0.5;
+    bitmap.y = height * -0.5;
+    this._sprite = new Sprite();
+    this._sprite.addChild(bitmap);
     this._width = width;
     this._height = height;
     this._world = world;
@@ -24,6 +29,10 @@ var ModuleDef = (function () {
 
   ModuleDef.prototype.getHeight = function () {
     return this._height;
+  };
+
+  ModuleDef.prototype.getSprite = function () {
+    return this._sprite;
   };
   
   return ModuleDef;
