@@ -20,8 +20,8 @@
         inBuildMode     = true,
         moduleDefs      = [],
         keyStates       = [],
-        mouseX          = 0,
-        mouseY          = 0,
+        mouse          = {'x' : 0, 'y' : 0}, // Current mouse position
+        mouseOffset    = {'x' : 0, 'y' : 0}, // How far off center a module is
         mouseSprite     = null,
         keyToButton = {'0' : 9, // Maps a key to a module button
                        '1' : 0,
@@ -119,8 +119,8 @@
     function selectModuleInMenu(e) {
       var eventSprite = e.currentTarget;
       mouseSprite = moduleDefs[e.currentTarget.index].getSprite();
-      console.log(eventSprite.x - mouseX);
-      console.log(eventSprite.y - mouseY);
+      mouseOffset.x = eventSprite.x - mouse.x;
+      mouseOffset.y = eventSprite.y - mouse.y;
       mouseSprite.visible = true;
     }
 
@@ -177,8 +177,8 @@
     function onEF() {
       if(inBuildMode) {
         if(mouseSprite != null) {
-          mouseSprite.x = mouseX;
-          mouseSprite.y = mouseY;
+          mouseSprite.x = mouse.x + mouseOffset.x;
+          mouseSprite.y = mouse.y + mouseOffset.y;
         }
       } else {
         // Activate modules as per key presses
@@ -208,8 +208,8 @@
     // Updates the position of the mouse because the ivank events don't seem 
     // to have them
     function mouseMove(e) {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
     }
   </script>
 <head>
