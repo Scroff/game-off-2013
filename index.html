@@ -18,6 +18,7 @@
         moduleButtons   = [],
         MAX_MODULES     = 6,
         inBuildMode     = true,
+        attachQueue     = null,
         moduleDefs      = [],
         keyStates       = [],
         mouse          = {'x' : 0, 'y' : 0}, // Current mouse position
@@ -79,7 +80,9 @@
     // To be added to event listeners for module sprites 
     // should be called when mouse is pressed while sprite is on mouse
     function moduleMouseDown(e) {
-      mouseSprite.visible = false;
+      if(mouseSprite == e.currentTarget) {
+        mouseSprite.visible = false;
+      }
     };
 
     function setupModules(stage) {
@@ -114,8 +117,13 @@
       walker.init(slothBMD, 64, 64, 100, 100, b2Body.b2_dynamicBody, world);
       walker.setDebug(true);
       stage.addChild(walker.getSprite());
+      walker.getSprite().addEventListener(MouseEvent.MOUSE_OVER, mouseOverActorBody);
     }
 
+    function mouseOverActorBody(e) {
+      console.log(e);
+    }
+    
     function selectModuleInMenu(e) {
       var eventSprite = e.currentTarget;
       mouseSprite = moduleDefs[e.currentTarget.index].getSprite();
