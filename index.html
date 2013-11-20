@@ -77,11 +77,22 @@
       stage.addChild(ground.getSprite());
     }
 
+    function mouseOverActorBody(e) {
+      if(attachQueue != null) {
+        console.log(e);
+        e.currentTarget.stage.addChild(attachQueue.getSprite());
+//        attachQueue.attachToActorBody(walker, LOC, world);
+      }
+    }
+
     // To be added to event listeners for module sprites 
     // should be called when mouse is pressed while sprite is on mouse
     function moduleMouseDown(e) {
       if(mouseSprite == e.currentTarget) {
         mouseSprite.visible = false;
+        attachQueue = moduleDefs[0].spawnModule(mouse.x + mouseOffset.x,
+            mouse.y + mouseOffset.y);
+        console.log(attachQueue);
       }
     };
 
@@ -120,10 +131,6 @@
       walker.getSprite().addEventListener(MouseEvent.MOUSE_OVER, mouseOverActorBody);
     }
 
-    function mouseOverActorBody(e) {
-      console.log(e);
-    }
-    
     function selectModuleInMenu(e) {
       var eventSprite = e.currentTarget;
       mouseSprite = moduleDefs[e.currentTarget.index].getSprite();
