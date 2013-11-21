@@ -17,7 +17,10 @@ var ModuleManager = (function () {
     type, 
     bitmapData, 
     width, 
-    height) {
+    height,
+    menu,
+    menuX,
+    menuY) {
     var moduleDef = new ModuleDef(type, bitmapData, width, height, this._world),
         sprite = moduleDef.getSprite();
     sprite.index = this._moduleDefs.length;
@@ -25,7 +28,7 @@ var ModuleManager = (function () {
     sprite.visible = false; // Don't show until it's under mouse
     this._stage.addChild(sprite);
     this._moduleDefs.push(moduleDef);
-  };
+  }; //TODO: Setup module in menu here
 
   // Called every frame to update all modules
   // mouse = position of the mouse with x and y values
