@@ -22,7 +22,6 @@ var ModuleManager = (function () {
         sprite = moduleDef.getSprite();
     sprite.index = this._moduleDefs.length;
     sprite.addEventListener(MouseEvent.MOUSE_UP, this._moduleDefSpriteMouseUp);
-    sprite.addEventListener(MouseEvent.MOUSE_OVER, this._moduleSpriteUnderMouse);
     sprite.visible = false; // Don't show until it's under mouse
     this._stage.addChild(sprite);
     this._moduleDefs.push(moduleDef);
